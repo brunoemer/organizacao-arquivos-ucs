@@ -1,7 +1,8 @@
+import java.io.Serializable;
 import java.util.LinkedList;
 
 
-public class Autor {
+public class Autor implements Serializable {
 	String nome;
 	LinkedList<String> enderecos =  new LinkedList<String>();
 
@@ -11,7 +12,7 @@ public class Autor {
 	}
 	
 	public void IncluiEndereco(String end)
-	{		
+	{
 		enderecos.add(end);
 	}
 

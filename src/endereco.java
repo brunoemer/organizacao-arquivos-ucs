@@ -12,5 +12,11 @@ public class endereco {
 	public void setEndereco(String endereco) {
 		this.endereco = endereco;
 	}
+	
+	@Override
+	public String toString() {
+		// TODO Auto-generated method stub
+		return this.endereco;
+	}
 
 }
