@@ -1,10 +1,10 @@
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.io.ObjectOutputStream;
-import java.io.ObjectStreamClass;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
 import java.nio.ByteBuffer;
@@ -47,11 +47,11 @@ public class XmlIndice {
 				
 				int endList = Autores.indexOf(a);
 				if(endList >= 0){
-					System.out.println(i+" Exist: "+a.getNome());
+//					System.out.println(i+" Exist: "+a.getNome());
 					
 					Autores.get(endList).IncluiEndereco(String.format("%012d", pos));
 				}else{
-					System.out.println(i+" New: "+a.getNome());
+//					System.out.println(i+" New: "+a.getNome());
 					
 					a.IncluiEndereco(String.format("%012d", pos));
 					Autores.add(a);
@@ -60,19 +60,25 @@ public class XmlIndice {
 				buffer.clear();
 				bytesRead = fileChannel.read(buffer);
 				i++;
+				if(i % 100 == 0){
+					System.out.println(i);
+				}
 			}
 			fis.close();
 			
-			Writer writer = new FileWriter(new File(this.fileXmlLocation));
-			ObjectOutputStream out = xstream.createObjectOutputStream(writer);
-			out.writeObject(Autores);
-			out.close();
-			
-//			String xml = "";
-//			xml = xstream.toXML(Autores);
-//			Writer writer2 = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(this.fileXmlLocation), "utf-8"));
-//			writer2.write(xml);
-//			writer2.close();
+			try{
+				String xml = "";
+				xml = xstream.toXML(Autores);
+				Writer writer2 = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(this.fileXmlLocation), "utf-8"));
+				writer2.write(xml);
+				writer2.close();
+			}catch(Exception exc){
+				// teste
+				Writer writer = new FileWriter(new File("x"+this.fileXmlLocation));
+				ObjectOutputStream out = xstream.createObjectOutputStream(writer, "autores");
+				out.writeObject(Autores);
+				out.close();
+			}
 			
 		} catch (IOException e) {
 			e.printStackTrace();
