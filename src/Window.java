@@ -211,7 +211,7 @@ public class Window {
 				long startTime = System.currentTimeMillis();
 				
 				XmlBusca b = new XmlBusca();
-				String res = b.findXPath(Integer.parseInt(txtBusca.getText()));
+				String res = b.findXPath(txtBuscaXml.getText());
 				appendPane(textSaida, res);
 
 				long endTime = System.currentTimeMillis();
@@ -228,7 +228,7 @@ public class Window {
 				long startTime = System.currentTimeMillis();
 				
 				XmlBusca b = new XmlBusca();
-				String res = b.findIndex(Integer.parseInt(txtBusca.getText()));
+				String res = b.findIndex(txtBuscaXml.getText());
 				appendPane(textSaida, res);
 
 				long endTime = System.currentTimeMillis();

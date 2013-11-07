@@ -29,7 +29,7 @@ public class XmlIndice {
 	public void makeIndex(){
 		try {
 			XStream xstream = new XStream(new DomDriver());
-			xstream.alias("autores", Autores.getClass());
+//			xstream.alias("autores", Autores.getClass());
 			xstream.alias("autor", Autor.class);
 			xstream.alias("endereco", String.class);
 			
@@ -37,7 +37,7 @@ public class XmlIndice {
 			FileChannel fileChannel = fis.getChannel();
 			ByteBuffer buffer = ByteBuffer.allocate(89);
 			int bytesRead = fileChannel.read(buffer);
-			int i = 0;
+//			int i = 0;
 			while (bytesRead != -1) {
 				String Line = new String(buffer.array(), "ASCII");
 				BookItem b = new BookItem(Line);
@@ -47,38 +47,43 @@ public class XmlIndice {
 				
 				int endList = Autores.indexOf(a);
 				if(endList >= 0){
-//					System.out.println(i+" Exist: "+a.getNome());
-					
 					Autores.get(endList).IncluiEndereco(String.format("%012d", pos));
 				}else{
-//					System.out.println(i+" New: "+a.getNome());
-					
 					a.IncluiEndereco(String.format("%012d", pos));
 					Autores.add(a);
 				}
 				
 				buffer.clear();
 				bytesRead = fileChannel.read(buffer);
-				i++;
-				if(i % 100 == 0){
-					System.out.println(i);
-				}
+//				i++;
+//				if(i % 100 == 0){
+//					System.out.println(i);
+//				}
 			}
 			fis.close();
 			
-			try{
-				String xml = "";
-				xml = xstream.toXML(Autores);
-				Writer writer2 = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(this.fileXmlLocation), "utf-8"));
-				writer2.write(xml);
-				writer2.close();
-			}catch(Exception exc){
-				// teste
-				Writer writer = new FileWriter(new File("x"+this.fileXmlLocation));
-				ObjectOutputStream out = xstream.createObjectOutputStream(writer, "autores");
-				out.writeObject(Autores);
-				out.close();
+			Writer writer = new FileWriter(new File(this.fileXmlLocation+"3"));
+			ObjectOutputStream out = xstream.createObjectOutputStream(writer, "autores");
+			for (Autor ita : Autores) {
+				out.writeObject(ita);
+				out.flush();
 			}
+			out.close();
+			
+//			try{
+//				// teste 1
+//				String xml = "";
+//				xml = xstream.toXML(Autores);
+//				Writer writer2 = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(this.fileXmlLocation), "utf-8"));
+//				writer2.write(xml);
+//				writer2.close();
+//			}catch(Exception exc){
+//				// teste 2
+//				Writer writer = new FileWriter(new File(this.fileXmlLocation+"2"));
+//				ObjectOutputStream out = xstream.createObjectOutputStream(writer, "autores");
+//				out.writeObject(Autores);
+//				out.close();
+//			}
 			
 		} catch (IOException e) {
 			e.printStackTrace();
