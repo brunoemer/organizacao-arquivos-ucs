@@ -1,6 +1,6 @@
-import java.io.ByteArrayInputStream;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -14,9 +14,14 @@ import org.w3c.dom.Document;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
+import com.thoughtworks.xstream.XStream;
+import com.thoughtworks.xstream.io.xml.DomDriver;
+
 
 public class XmlBusca {
+	private static final int LinkedList = 0;
 	private XmlIndice index;
+	private ListAutores aut = new ListAutores();
 
 	public XmlBusca() {
 		this.index = new XmlIndice();
@@ -60,9 +65,57 @@ public class XmlBusca {
 		return res;
 	}
 	
-	public String findIndex(String autor){
+	public void makeMemoryIndex(){
+
+		try {
+	        XStream xstream = new XStream(new DomDriver());
+	        xstream.alias("autores", ListAutores.class);
+	        xstream.alias("autor", Autor.class);
+//	        xstream.alias("enderecos", AutorEnderecos.class);
+//	        xstream.aliasField("enderecos", Autor.class, "enderecos");
+	        xstream.addImplicitCollection(ListAutores.class, "autores");
+//	        xstream.addImplicitCollection(AutorEnderecos.class, "enderecos");
+	        InputStream in = new FileInputStream(this.index.getFileXmlLocation());
+	        this.aut = (ListAutores)xstream.fromXML(in);
+			
+//			System.out.println(this.aut.autores.size());
+
+//	        for (Autor ita : this.aut.autores) {
+//	        	System.out.println(ita.getNome());
+//	        	System.out.println(ita.getEnderecos());
+//	        	for (String end : ita.getEnderecos()) {
+//					System.out.println(end);
+//				}
+////	        	authors.add(ita);
+//	        }
+	        
+			
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 		
-		return "";
+	}
+	
+	public String findIndex(String autor){
+		String res = "";
+
+//		System.out.println(this.authors.size());
+		
+		int index = this.aut.autores.indexOf(new Autor(autor));
+		Autor a = this.aut.autores.get(index);
+		res += "Autor: "+a.getNome()+"\n";
+		
+		try{
+			SequencialIndexadoBusca sequencialIndex = new SequencialIndexadoBusca();
+			for (String end : a.getEnderecos()) {
+				BookItem b = sequencialIndex.GetBookInsideIndex(Integer.parseInt(end));
+				res += "Cod: "+b.getCode()+" Titulo: "+b.getTitle()+"\n";
+			}
+		}catch(Exception exc){
+			
+		}
+		
+		return res;
 	}
 	
 	

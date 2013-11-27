@@ -21,6 +21,7 @@ import com.thoughtworks.xstream.XStream;
 public class Window {
 	private JFrame frame;
 	private JTextPane textSaida;
+	public final XmlBusca b = new XmlBusca();
 	
 	/**
 	 * Create the application.
@@ -200,6 +201,22 @@ public class Window {
 		});
 		toolBar2.add(btnGerar3);
 		
+		JButton btnGerar4 = new JButton("Gerar indice memoria xml");
+		btnGerar4.setMargin(new Insets(2, 2, 2, 2));
+		btnGerar4.setFont(new Font("Dialog", Font.BOLD, 10));
+		btnGerar4.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				long startTime = System.currentTimeMillis();
+				
+				b.makeMemoryIndex();
+				appendPane(textSaida, "Indice xml gerado");
+				
+				long endTime = System.currentTimeMillis();
+				showTime(endTime - startTime);
+			}
+		});
+		toolBar2.add(btnGerar4);
+		
 		final JTextField txtBuscaXml = new JTextField();
 		toolBar2.add(txtBuscaXml);
 		
@@ -210,7 +227,6 @@ public class Window {
 			public void actionPerformed(ActionEvent arg0) {
 				long startTime = System.currentTimeMillis();
 				
-				XmlBusca b = new XmlBusca();
 				String res = b.findXPath(txtBuscaXml.getText());
 				appendPane(textSaida, res);
 
@@ -227,7 +243,6 @@ public class Window {
 			public void actionPerformed(ActionEvent arg0) {
 				long startTime = System.currentTimeMillis();
 				
-				XmlBusca b = new XmlBusca();
 				String res = b.findIndex(txtBuscaXml.getText());
 				appendPane(textSaida, res);
 

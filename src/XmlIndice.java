@@ -62,7 +62,7 @@ public class XmlIndice {
 			}
 			fis.close();
 			
-			Writer writer = new FileWriter(new File(this.fileXmlLocation+"3"));
+			Writer writer = new FileWriter(new File(this.fileXmlLocation));
 			ObjectOutputStream out = xstream.createObjectOutputStream(writer, "autores");
 			for (Autor ita : Autores) {
 				out.writeObject(ita);
