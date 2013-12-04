@@ -2,13 +2,20 @@
 import java.awt.BorderLayout;
 import java.awt.Component;
 import java.awt.Dimension;
+import java.awt.FlowLayout;
 import java.awt.Font;
+import java.awt.GridLayout;
 import java.awt.Insets;
+import java.awt.LayoutManager;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
 
+import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
+import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSplitPane;
 import javax.swing.JTextField;
@@ -22,6 +29,8 @@ public class Window {
 	private JFrame frame;
 	private JTextPane textSaida;
 	public final XmlBusca b = new XmlBusca();
+	public final Mongo MongoMngr = new Mongo();
+	
 	
 	/**
 	 * Create the application.
@@ -36,35 +45,14 @@ public class Window {
 	 */
 	private void initialize() {
 		frame = new JFrame();
-		frame.setBounds(100, 100, 800, 600);
+		frame.setBounds(100, 100, 800, 400);
 		frame.setTitle("Busca indices");
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		frame.getContentPane().setLayout(new BorderLayout(0, 0));
+		frame.getContentPane().setLayout(new BorderLayout() );
 		
-//		JSplitPane splitPane = new JSplitPane();
-//		splitPane.setResizeWeight(0.5);
-//		splitPane.setOneTouchExpandable(true);
-//		splitPane.setAutoscrolls(true);
-//		splitPane.setToolTipText("");
-//		frame.getContentPane().add(splitPane, BorderLayout.CENTER);
-//		
-//		final JTextPane textEntrada = new JTextPane() {
-//			@Override
-//			public boolean getScrollableTracksViewportWidth() {
-//				return (getSize().width < getParent().getSize().width);
-//			}
-//			@Override
-//			public void setSize(Dimension d) {
-//				if (d.width < getParent().getSize().width) {
-//					d.width = getParent().getSize().width;
-//				}
-//				super.setSize(d);
-//			}
-//		};
-//		textEntrada.setEditable(false);
-//		JScrollPane scrollEntrada = new JScrollPane(textEntrada);
-//		scrollEntrada.setAutoscrolls(true);
-//		splitPane.setLeftComponent(scrollEntrada);
+		
+		JPanel boxContainer = new JPanel();
+		boxContainer.setLayout(new BoxLayout(boxContainer, BoxLayout.Y_AXIS));
 		
 		textSaida = new JTextPane() {
 			@Override
@@ -91,7 +79,7 @@ public class Window {
 		toolBar.setInheritsPopupMenu(true);
 		toolBar.setAlignmentX(Component.LEFT_ALIGNMENT);
 		toolBar.setOrientation(SwingConstants.HORIZONTAL);
-		frame.getContentPane().add(toolBar, BorderLayout.NORTH);
+		boxContainer.add(toolBar);
 
 		JToolBar toolBar2 = new JToolBar();
 		toolBar2.setFont(new Font("Dialog", Font.BOLD, 10));
@@ -99,7 +87,16 @@ public class Window {
 		toolBar2.setInheritsPopupMenu(true);
 		toolBar2.setAlignmentX(Component.LEFT_ALIGNMENT);
 		toolBar2.setOrientation(SwingConstants.HORIZONTAL);
-		frame.getContentPane().add(toolBar2, BorderLayout.SOUTH);
+		boxContainer.add(toolBar2);
+		
+		JToolBar toolBar3 = new JToolBar();
+		toolBar3.setFont(new Font("Dialog", Font.BOLD, 10));
+		toolBar3.setRollover(true);
+		toolBar3.setInheritsPopupMenu(true);
+		toolBar3.setAlignmentX(Component.LEFT_ALIGNMENT);
+		toolBar3.setOrientation(SwingConstants.HORIZONTAL);
+		boxContainer.add(toolBar3);
+		frame.getContentPane().add(boxContainer,BorderLayout.NORTH);
 		
 		JButton btnResetar = new JButton("Limpar");
 		btnResetar.setMargin(new Insets(2, 2, 2, 2));
@@ -251,6 +248,100 @@ public class Window {
 			}
 		});
 		toolBar2.add(btnBusca4);
+	
+		
+		JButton btnCriaBD = new JButton("Criar BD");
+		btnCriaBD.setMargin(new Insets(2, 2, 2, 2));
+		btnCriaBD.setFont(new Font("Dialog", Font.BOLD, 10));
+		btnCriaBD.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				long startTime = System.currentTimeMillis();
+				
+				MongoMngr.CriaDB();
+				//XmlIndice i = new XmlIndice();
+				//i.makeIndex();
+				//appendPane(textSaida, "Arquivo xml gerado");
+				
+				long endTime = System.currentTimeMillis();
+				showTime(endTime - startTime);
+			}
+		});
+		toolBar3.add(btnCriaBD);
+		
+		//Criação dos botões para busca no mongo
+		JLabel lb = new JLabel();
+		lb.setText("Busca Mongo:");
+		toolBar3.add(lb);
+		final JTextField txtBuscaTitulo = new JTextField();
+		toolBar3.add(txtBuscaTitulo);
+		
+		JButton btnPesqTitulo = new JButton("Pesquisar Titulo");
+		btnPesqTitulo.setMargin(new Insets(2, 2, 2, 2));
+		btnPesqTitulo.setFont(new Font("Dialog", Font.BOLD, 10));
+		btnPesqTitulo.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				long startTime = System.currentTimeMillis();
+				
+				ArrayList<String> st =  MongoMngr.PesqusiaTitulo(txtBuscaTitulo.getText());
+				for(int i=0;i<st.size();i++)
+				{
+					appendPane(textSaida,st.get(i));
+				}
+				
+				long endTime = System.currentTimeMillis();
+				showTime(endTime - startTime);
+			}
+		});
+		toolBar3.add(btnPesqTitulo);
+		
+		final JTextField txtBuscaAutor = new JTextField();
+		toolBar3.add(txtBuscaAutor);
+		JButton btnPesqAutor = new JButton("Pesquisar Autor");
+		btnPesqAutor.setMargin(new Insets(2, 2, 2, 2));
+		btnPesqAutor.setFont(new Font("Dialog", Font.BOLD, 10));
+		btnPesqAutor.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				long startTime = System.currentTimeMillis();
+				
+				ArrayList<String> st =  MongoMngr.PesquisaAutor(txtBuscaAutor.getText());
+				for(int i=0;i<st.size();i++)
+				{
+					appendPane(textSaida,st.get(i));
+				}
+				
+				long endTime = System.currentTimeMillis();
+				showTime(endTime - startTime);
+			}
+		});
+		toolBar3.add(btnPesqAutor);
+		
+				
+		final JTextField txtBuscaCodigo = new JTextField();
+		toolBar3.add(txtBuscaCodigo);
+		
+		
+		JButton btnPesqCodigo = new JButton("Pesqusia Codigo");
+		btnPesqCodigo.setMargin(new Insets(2, 2, 2, 2));
+		btnPesqCodigo.setFont(new Font("Dialog", Font.BOLD, 10));
+		btnPesqCodigo.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent arg0) {
+				long startTime = System.currentTimeMillis();
+				
+				ArrayList<String> st =  MongoMngr.PesquisaCodigo(Integer.parseInt(txtBuscaCodigo.getText()));
+				for(int i=0;i<st.size();i++)
+				{
+					appendPane(textSaida,st.get(i));
+				}
+				
+				long endTime = System.currentTimeMillis();
+				showTime(endTime - startTime);
+			}
+		});
+		toolBar3.add(btnPesqCodigo);
+			
+		
+		
+		
 		
 	}
 	
