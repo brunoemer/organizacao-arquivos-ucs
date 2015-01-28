@@ -1,5 +1,3 @@
-This is a Subversion repository; use the 'svnadmin' and 'svnlook' 
-tools to examine it.  Do not add, delete, or modify files here 
-unless you know how to avoid corrupting the repository.
+Universidade de Caxias do Sul - Centro de Computação e Tecnologia da Informação 
 
-Visit http://subversion.apache.org/ for more information.
+Trabalho manipulação de arquivos, criação e buscas com indices 
